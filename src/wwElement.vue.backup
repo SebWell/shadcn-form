@@ -2,31 +2,31 @@
   <form 
     :class="cn(
       'space-y-6',
-      customClass
+      content.customClass
     )"
     @submit="onSubmit"
     @reset="onReset"
     novalidate
   >
     <!-- Form header -->
-    <div v-if="showHeader" class="space-y-2">
+    <div v-if="content.showHeader" class="space-y-2">
       <h2 
-        v-if="title"
+        v-if="content.title"
         :class="cn(
           'text-2xl font-semibold tracking-tight',
-          titleClass
+          content.titleClass
         )"
       >
-        {{ title }}
+        {{ content.title }}
       </h2>
       <p 
-        v-if="description"
+        v-if="content.description"
         :class="cn(
           'text-sm text-muted-foreground',
-          descriptionClass
+          content.descriptionClass
         )"
       >
-        {{ description }}
+        {{ content.description }}
       </p>
     </div>
     
@@ -34,11 +34,11 @@
     <div 
       :class="cn(
         'space-y-4',
-        fieldsLayout === 'grid' && 'grid gap-4',
-        fieldsLayout === 'grid' && gridCols === 2 && 'grid-cols-2',
-        fieldsLayout === 'grid' && gridCols === 3 && 'grid-cols-3',
-        fieldsLayout === 'inline' && 'flex flex-wrap gap-4',
-        fieldsClass
+        content.fieldsLayout === 'grid' && 'grid gap-4',
+        content.fieldsLayout === 'grid' && content.gridCols === 2 && 'grid-cols-2',
+        content.fieldsLayout === 'grid' && content.gridCols === 3 && 'grid-cols-3',
+        content.fieldsLayout === 'inline' && 'flex flex-wrap gap-4',
+        content.fieldsClass
       )"
     >
       <slot />
@@ -67,13 +67,13 @@
     
     <!-- Success message -->
     <div 
-      v-if="showSuccess && successMessage"
+      v-if="showSuccess && content.successMessage"
       class="rounded-md border border-green-500/50 bg-green-50 p-4 dark:bg-green-900/20"
     >
       <div class="flex">
         <div class="ml-3">
           <p class="text-sm font-medium text-green-800 dark:text-green-200">
-            {{ successMessage }}
+            {{ content.successMessage }}
           </p>
         </div>
       </div>
@@ -81,18 +81,18 @@
     
     <!-- Form actions -->
     <div 
-      v-if="showActions"
+      v-if="content.showActions"
       :class="cn(
         'flex gap-3',
-        actionsAlignment === 'center' && 'justify-center',
-        actionsAlignment === 'right' && 'justify-end',
-        actionsAlignment === 'between' && 'justify-between',
-        actionsClass
+        content.actionsAlignment === 'center' && 'justify-center',
+        content.actionsAlignment === 'right' && 'justify-end',
+        content.actionsAlignment === 'between' && 'justify-between',
+        content.actionsClass
       )"
     >
       <!-- Cancel button -->
       <button
-        v-if="showCancel"
+        v-if="content.showCancel"
         type="button"
         :disabled="isSubmitting"
         :class="cn(
@@ -100,16 +100,16 @@
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
           'border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2',
-          cancelButtonClass
+          content.cancelButtonClass
         )"
         @click="onCancel"
       >
-        {{ cancelText || $t('form.cancel') }}
+        {{ content.cancelText || $t('form.cancel') }}
       </button>
       
       <!-- Reset button -->
       <button
-        v-if="showReset"
+        v-if="content.showReset"
         type="reset"
         :disabled="isSubmitting"
         :class="cn(
@@ -117,10 +117,10 @@
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
           'border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2',
-          resetButtonClass
+          content.resetButtonClass
         )"
       >
-        {{ resetText || $t('form.reset') }}
+        {{ content.resetText || $t('form.reset') }}
       </button>
       
       <!-- Submit button -->
@@ -132,26 +132,26 @@
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
           'bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2',
-          submitButtonClass
+          content.submitButtonClass
         )"
       >
         <span 
           v-if="isSubmitting" 
           class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"
         />
-        {{ isSubmitting ? (submittingText || $t('form.submitting')) : (submitText || $t('form.submit')) }}
+        {{ isSubmitting ? (content.submittingText || $t('form.submitting')) : (content.submitText || $t('form.submit')) }}
       </button>
     </div>
     
     <!-- Form footer -->
     <div 
-      v-if="footerText"
+      v-if="content.footerText"
       :class="cn(
         'text-center text-sm text-muted-foreground',
-        footerClass
+        content.footerClass
       )"
     >
-      {{ footerText }}
+      {{ content.footerText }}
     </div>
   </form>
 </template>
@@ -247,8 +247,8 @@ const validateForm = () => {
   }
   
   // Custom form-level validations
-  if (value?.validations) {
-    value.validations.forEach(validation => {
+  if (content.value?.validations) {
+    content.value.validations.forEach(validation => {
       if (!validation.test(formData.value)) {
         globalErrors.push(validation.message)
         isFormValid = false
@@ -286,14 +286,14 @@ const onSubmit = async (event) => {
       formElement: event.target
     })
     
-    if (value?.showSuccessMessage) {
+    if (content.value?.showSuccessMessage) {
       showSuccess.value = true
       setTimeout(() => {
         showSuccess.value = false
-      }, value?.successDuration || 3000)
+      }, content.value?.successDuration || 3000)
     }
     
-    if (value?.resetOnSuccess) {
+    if (content.value?.resetOnSuccess) {
       onReset()
     }
   } catch (error) {
@@ -352,7 +352,7 @@ provide('form', {
 
 // Lifecycle
 onMounted(() => {
-  if (value?.autoFocus) {
+  if (content.value?.autoFocus) {
     const firstInput = document.querySelector('form input, form select, form textarea')
     if (firstInput) {
       firstInput.focus()
